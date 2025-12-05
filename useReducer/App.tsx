@@ -13,7 +13,7 @@ type TodoState = {
 
 type TodoAction = 
   |{type: 'ADD', payload: TodoData}
-  |{type: 'CHECK', payload: number}
+  |{type: 'DONE', payload: number}
   |{type: 'DELETE', payload: number}
 
 
@@ -26,7 +26,7 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
         ...state,
         todos:[...state.todos, action.payload]
       }
-    case 'CHECK':
+    case 'DONE':
       return {
         ...state,
         todos: state.todos.map(todo => {
@@ -47,51 +47,41 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
   }
 }
 
+let nextId = 0
+
 export default function App() {
 
+  const [state, dispatch] = useReducer(todoReducer, initialState)
 
-  const [db, setDb] = useState<SQLite.SQLiteDatabase | null>(null)
 
   const [newTask, addNewTask] = useState<string>("")
   const [tasks, setTasks] = useState<Array<TodoData>>([])
 
-  useEffect(() => {
-    const initDb = async() => {
-      const database = await SQLite.openDatabaseAsync('todos.db')
-      setDb(database)
 
-      await database.execAsync(
-        `CREATE TABLE IF NOT EXISTS (tasks) (
-          id INTEGER PRIMARY KEY AUTO INCREMENT,
-          task TEXT NOT NULL
-        )`
-      )
 
-      loadTasks(database)
-    }
-    initDb()
-  },[])
+  const addTask = () => {
 
-  const loadTasks = async(database: SQLite.SQLiteDatabase) => {
-    const result = await database.getAllAsync<TodoData>('SELECT * FROM tasks ORDER BY id DESC')
-
-    setTasks(result)
-  }
-
-  const addTask = async() => {
-
-    if(newTask==='' || !newTask.trim() || !db) return
-
-    await db.runAsync(`INSERT INTO tasks (task) VALUES (?)`, newTask)
+    if(newTask==='' || !newTask.trim()) return
 
     addNewTask("")
-    loadTasks(db)
+
+    nextId++
+
+    dispatch(
+      {
+        type:'ADD',
+        payload: {id:nextId, task:newTask, isDone:false}
+      }
+    )
   }
 
-  const deleteTask = async(id: number) => {
+  const setDone = (id: number) => {
+    dispatch({type:'DONE', payload:id})
+  }
 
-    await db?.runAsync('DELETE * FROM tasks WHERE id=(?)', id)
-    //setTasks(prev => prev.filter(t => t.id !== id))
+  const deleteTask = (id: number) => {
+
+    dispatch({type:'DELETE', payload:id})
   }
 
   return (
