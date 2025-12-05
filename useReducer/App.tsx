@@ -110,7 +110,7 @@ export default function App() {
 
       <ScrollView>
         {
-          tasks.map(task => (
+          state.todos.map(task => (
             <TodoRow key={task.id} id={task.id} task={task.task} onDelete={deleteTask} />
           ))
         }
