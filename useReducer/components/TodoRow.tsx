@@ -5,11 +5,12 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 type TodoRowProps = {
     id: number,
     task: string,
+    isDone: boolean,
     onDelete: (id: number) => void,
     onCheck: (id:number) => void,
 }
 
-const TodoRow = ({ id, task, onDelete, onCheck} : TodoRowProps) => {
+const TodoRow = ({ id, task, isDone, onDelete, onCheck} : TodoRowProps) => {
     return (
         <View style={styles.row}>
             <Text style={styles.taskText}>{task}</Text>
@@ -21,7 +22,10 @@ const TodoRow = ({ id, task, onDelete, onCheck} : TodoRowProps) => {
             <Pressable
             style={styles.checkButton}
             onPress={() => onCheck(id)}>
-                <AntDesign name="check" size={24} color="black" />
+                {
+                    isDone ? <AntDesign name="close" size={24} color="black" />
+                    : <AntDesign name="check" size={24} color="black" />
+                }
             </Pressable>
         </View>
     )
