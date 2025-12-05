@@ -55,8 +55,6 @@ export default function App() {
 
 
   const [newTask, addNewTask] = useState<string>("")
-  const [tasks, setTasks] = useState<Array<TodoData>>([])
-
 
 
   const addTask = () => {
@@ -111,7 +109,13 @@ export default function App() {
       <ScrollView>
         {
           state.todos.map(task => (
-            <TodoRow key={task.id} id={task.id} task={task.task} onDelete={deleteTask} />
+            <TodoRow 
+            key={task.id} 
+            id={task.id} 
+            task={task.task} 
+            isDone={task.isDone}
+            onDelete={deleteTask} 
+            onCheck={setDone} />
           ))
         }
       </ScrollView>
