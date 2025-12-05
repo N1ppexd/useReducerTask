@@ -47,7 +47,7 @@ const todoReducer = (state: TodoState, action: TodoAction): TodoState => {
   }
 }
 
-let nextId = 0
+let nextId :number = 0
 
 export default function App() {
 
